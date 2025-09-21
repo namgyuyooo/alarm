@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 @main
 struct BedTimerApp: App {
@@ -13,5 +14,6 @@ struct BedTimerApp: App {
         WindowGroup {
             ContentView()
         }
+        .modelContainer(for: BedSession.self)
     }
 }
