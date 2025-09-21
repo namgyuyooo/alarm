@@ -1,0 +1,84 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:ios)
+
+platform :ios do
+  desc "Build and upload to TestFlight"
+  lane :beta do
+    # Build iOS app
+    build_app(
+      workspace: "BedTimer.xcworkspace",
+      scheme: "BedTimer",
+      configuration: "Release",
+      export_method: "app-store",
+      output_directory: "./build",
+      output_name: "BedTimer.ipa"
+    )
+    
+    # Build watchOS app
+    build_app(
+      workspace: "BedTimer.xcworkspace", 
+      scheme: "BedTimerWatch",
+      configuration: "Release",
+      export_method: "app-store",
+      output_directory: "./build",
+      output_name: "BedTimerWatch.ipa"
+    )
+    
+    # Upload to TestFlight
+    upload_to_testflight(
+      skip_waiting_for_build_processing: true,
+      skip_submission: true,
+      notify_external_testers: false
+    )
+    
+    # Generate changelog
+    changelog = generate_changelog
+    slack(
+      message: "🚀 BedTimer v#{get_version_number} deployed to TestFlight!",
+      channel: "#releases",
+      success: true
+    )
+  end
+  
+  desc "Build for App Store"
+  lane :release do
+    # Build and upload to App Store Connect
+    build_app(
+      workspace: "BedTimer.xcworkspace",
+      scheme: "BedTimer",
+      configuration: "Release",
+      export_method: "app-store"
+    )
+    
+    upload_to_app_store(
+      force: true,
+      skip_binary_upload: false,
+      skip_screenshots: false,
+      skip_metadata: false,
+      submit_for_review: false
+    )
+  end
+  
+  desc "Run tests"
+  lane :test do
+    run_tests(
+      workspace: "BedTimer.xcworkspace",
+      scheme: "BedTimer",
+      device: "iPhone 15"
+    )
+  end
+end

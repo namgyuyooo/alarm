@@ -1,0 +1,105 @@
+name: Bug Report
+description: Report a bug or unexpected behavior
+title: "[Bug]: "
+labels: ["bug", "triage"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug! Please fill out the form below.
+
+  - type: textarea
+    id: bug-description
+    attributes:
+      label: Bug Description
+      description: A clear and concise description of what the bug is.
+      placeholder: Describe the bug...
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps-to-reproduce
+    attributes:
+      label: Steps to Reproduce
+      description: Steps to reproduce the behavior.
+      placeholder: |
+        1. Go to '...'
+        2. Click on '...'
+        3. Scroll down to '...'
+        4. See error
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: Expected Behavior
+      description: A clear and concise description of what you expected to happen.
+      placeholder: What should have happened?
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual-behavior
+    attributes:
+      label: Actual Behavior
+      description: A clear and concise description of what actually happened.
+      placeholder: What actually happened?
+    validations:
+      required: true
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots
+      description: If applicable, add screenshots to help explain your problem.
+      placeholder: Add screenshots here...
+
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      description: Which platform is affected?
+      options:
+        - iOS
+        - watchOS
+        - Both
+    validations:
+      required: true
+
+  - type: input
+    id: ios-version
+    attributes:
+      label: iOS Version
+      description: What version of iOS are you using?
+      placeholder: e.g., 17.0
+
+  - type: input
+    id: watchos-version
+    attributes:
+      label: watchOS Version
+      description: What version of watchOS are you using?
+      placeholder: e.g., 10.0
+
+  - type: input
+    id: device-model
+    attributes:
+      label: Device Model
+      description: What device model are you using?
+      placeholder: e.g., iPhone 15, Apple Watch Series 9
+
+  - type: input
+    id: app-version
+    attributes:
+      label: App Version
+      description: What version of BedTimer are you using?
+      placeholder: e.g., 1.0.0
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Add any other context about the problem here.
+      placeholder: Any additional information...

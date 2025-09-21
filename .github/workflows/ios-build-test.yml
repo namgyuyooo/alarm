@@ -1,0 +1,54 @@
+name: iOS Build & Test
+
+on:
+  pull_request:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-test:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: maxim-lobanov/setup-xcode@v1
+        with: 
+          xcode-version: '16.0'
+      
+      - name: Cache SPM
+        uses: actions/cache@v4
+        with:
+          path: ~/Library/Developer/Xcode/DerivedData
+          key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
+      
+      - name: SwiftLint
+        uses: norio-nomura/action-swiftlint@3.2.1
+        continue-on-error: true
+      
+      - name: Build & Test (iOS)
+        run: |
+          xcodebuild -workspace BedTimer.xcworkspace \
+            -scheme BedTimer \
+            -destination 'platform=iOS Simulator,name=iPhone 15' \
+            clean test | xcpretty
+      
+      - name: Build (watchOS)
+        run: |
+          xcodebuild -workspace BedTimer.xcworkspace \
+            -scheme BedTimerWatch \
+            -destination 'platform=watchOS Simulator,name=Apple Watch Series 9 (45mm)' \
+            build | xcpretty
+      
+      - name: Build (WidgetKit)
+        run: |
+          xcodebuild -workspace BedTimer.xcworkspace \
+            -scheme BedTimerWidgets \
+            -destination 'platform=iOS Simulator,name=iPhone 15' \
+            build | xcpretty
+      
+      - name: Build (Intents)
+        run: |
+          xcodebuild -workspace BedTimer.xcworkspace \
+            -scheme BedTimerIntents \
+            -destination 'platform=iOS Simulator,name=iPhone 15' \
+            build | xcpretty
