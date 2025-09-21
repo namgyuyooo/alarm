@@ -28,6 +28,8 @@ public final class BedSession {
     }
 }
 
+extension BedSession: Identifiable {}
+
 // MARK: - Computed Properties
 public extension BedSession {
     /// 실제 머무른 시간 (분)
@@ -41,7 +43,7 @@ public extension BedSession {
     
     /// 목표 달성 여부
     var metGoal: Bool {
-        return actualMinutes <= goalMinutes
+        return isCompleted && actualMinutes <= goalMinutes
     }
     
     /// 세션 완료 여부
@@ -62,6 +64,28 @@ public extension BedSession {
         }
         let elapsed = Int(Date().timeIntervalSince(acknowledged) / 60)
         return max(0, goalMinutes - elapsed)
+    }
+    
+    /// 목표 시간 대비 진행률 (0~1)
+    var goalProgress: Double {
+        guard goalMinutes > 0, let acknowledgedAt else { return 0 }
+        let elapsed: TimeInterval
+        if let outOfBedAt {
+            elapsed = outOfBedAt.timeIntervalSince(acknowledgedAt)
+        } else {
+            elapsed = Date().timeIntervalSince(acknowledgedAt)
+        }
+        let total = Double(goalMinutes) * 60
+        guard total > 0 else { return 0 }
+        return min(1, max(0, elapsed / total))
+    }
+    
+    /// 경과 시간 (분) — 진행 중에도 현재 시각 기준으로 계산
+    var elapsedMinutes: Int {
+        guard let acknowledgedAt else { return 0 }
+        let end = outOfBedAt ?? Date()
+        let elapsed = end.timeIntervalSince(acknowledgedAt)
+        return max(0, Int(elapsed / 60))
     }
 }
 

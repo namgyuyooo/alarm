@@ -3,6 +3,8 @@ import SwiftData
 
 public protocol SessionRepositoryProtocol {
     func save(_ session: BedSession) async throws
+    func update(_ session: BedSession) async throws
+    func update(_ session: BedSession) async throws
     func fetchAll() async throws -> [BedSession]
     func fetchById(_ id: UUID) async throws -> BedSession?
     func delete(_ session: BedSession) async throws
@@ -47,6 +49,13 @@ public final class SessionRepository: SessionRepositoryProtocol {
     
     public func save(_ session: BedSession) async throws {
         modelContext.insert(session)
+        try modelContext.save()
+    }
+    
+    public func update(_ session: BedSession) async throws {
+        if session.modelContext == nil {
+            modelContext.insert(session)
+        }
         try modelContext.save()
     }
     

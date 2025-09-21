@@ -3,7 +3,9 @@ import UserNotifications
 
 public protocol AlarmRepositoryProtocol {
     func requestNotificationPermission() async throws -> Bool
+    func notificationAuthorizationStatus() async -> UNAuthorizationStatus
     func scheduleAlarm(for date: Date, title: String, body: String) async throws
+    func scheduleTestAlarm(after interval: TimeInterval) async throws
     func cancelAlarm(with identifier: String) async throws
     func cancelAllAlarms() async throws
     func getPendingAlarms() async throws -> [UNNotificationRequest]
@@ -34,6 +36,11 @@ public final class AlarmRepository: AlarmRepositoryProtocol {
     private func requestAuthorization() async throws -> Bool {
         let granted = try await notificationCenter.requestAuthorization(options: [.alert, .sound, .badge])
         return granted
+    }
+    
+    public func notificationAuthorizationStatus() async -> UNAuthorizationStatus {
+        let settings = await notificationCenter.notificationSettings()
+        return settings.authorizationStatus
     }
     
     public func scheduleAlarm(for date: Date, title: String, body: String) async throws {
@@ -81,6 +88,15 @@ public final class AlarmRepository: AlarmRepositoryProtocol {
         )
         
         try await notificationCenter.add(request)
+    }
+    
+    public func scheduleTestAlarm(after interval: TimeInterval = 60) async throws {
+        let date = Date().addingTimeInterval(interval)
+        try await scheduleAlarm(
+            for: date,
+            title: "BedTimer Test Alarm",
+            body: "This is a quick test to confirm BedTimer notifications."
+        )
     }
     
     public func cancelAlarm(with identifier: String) async throws {
